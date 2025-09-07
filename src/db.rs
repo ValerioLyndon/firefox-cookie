@@ -4,7 +4,7 @@
 
 use std::path::Path;
 
-use anyhow::{bail, Context};
+use anyhow::{Context};
 use rusqlite::{Connection, OpenFlags, Row};
 
 use crate::cookie::{Cookie, CookieSameSite};
@@ -92,7 +92,7 @@ fn row_to_cookie(row: &Row) -> anyhow::Result<Cookie> {
         // sameSite 列の仕様がよくわかってないので、念のため 0 も Lax 扱いにしておく。
         0 | 1 => CookieSameSite::Lax,
         2 => CookieSameSite::Strict,
-        _ => bail!("Unknown same_site value: {same_site}"),
+        _ => CookieSameSite::Lax, // default to lax when value unknown
     };
 
     let cookie = Cookie {
